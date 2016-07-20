@@ -38,7 +38,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
     elseif os.get() == "osx" then
 
         zpm.util.download( "repo.continuum.io/archive/Anaconda3-4.0.0-MacOSX-x86_64.sh", zpm.temp, "*" )
-        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.0.0-MacOSX-x86_64.sh" )
+        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.0.0-MacOSX-x86_64.sh -b" )
         os.execute( string.format( "bash %s", file ) )
 
         os.remove( file )
@@ -46,7 +46,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
     elseif os.get() == "linux" then
 
         zpm.util.download( "repo.continuum.io/archive/Anaconda3-4.0.0-Linux-x86_64.sh", zpm.temp, "*" )
-        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.0.0-Linux-x86_64.sh" )
+        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.0.0-Linux-x86_64.sh -b" )
         os.execute( string.format( "bash %s", file ) )
 
         os.remove( file )
