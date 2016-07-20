@@ -30,7 +30,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
     if os.get() == "windows" then
 
         zpm.util.download( "repo.continuum.io/archive/Anaconda3-4.0.0-Windows-x86_64.exe", zpm.temp, "*" )
-        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.0.0-Windows-x86_64.exe" )
+        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.0.0-Windows-x86_64.exe /S" )
         os.execute( file )
 
         os.remove( file )
