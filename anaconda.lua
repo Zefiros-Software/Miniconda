@@ -22,13 +22,13 @@
 -- @endcond
 --]]
 
-local bin = "$HOME/zpm-anaconda/bin/"
+local anaBin = "$HOME/zpm-anaconda/Scripts/"
 if os.get() == "windows" then
-    bin = "%UserProfile%\zpm-anaconda"
+    anaBin = "%UserProfile%\zpm-anaconda/Scripts/"
 end
 
 
-local result, errorCode = os.outputof( string.format( "%s/conda --version", bin ) )
+local result, errorCode = os.outputof( string.format( "%s/conda --version", anaBin ) )
 
 -- check if installed
 if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
@@ -37,7 +37,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
 
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" )
-        os.executef( "%s /InstallationType=JustMe /RegisterPython=0 /S /D=%%UserProfile%%\zpm-anaconda /S", file )
+        os.executef( "%s /InstallationType=JustMe /RegisterPython=0 /S /D=%%UserProfile%%\zpm-anaconda", file )
 
         os.remove( file )
 
@@ -46,7 +46,6 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-MacOSX-x86_64.sh", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-MacOSX-x86_64.sh" )
         os.executef( "%s -p $HOME/zpm-anaconda", file )
-        os.execute( "export PATH=\"$HOME/zpm-anaconda/bin:$PATH\"" )
 
         os.remove( file )
 
@@ -55,7 +54,6 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Linux-x86_64.sh" )
         os.executef( "%s -p $HOME/zpm-anaconda", file )
-        os.execute( "export PATH=\"$HOME/zpm-anaconda/bin:$PATH\"" )
 
         os.remove( file )
 
@@ -64,5 +62,5 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
     end
 
 else
-    os.executef( "%s/conda update conda -y", bin )
+    os.executef( "%s/conda update conda -y", anaBin )
 end
