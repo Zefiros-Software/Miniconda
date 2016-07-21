@@ -24,7 +24,7 @@
 
 local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
 
-local check =  string.format( "%sconda.exe --version", anaBin ) 
+local check =  string.format( "%sconda --version", anaBin ) 
 local result, errorCode = os.outputof( check )
 
 print( "Conda status ----------------", check, result )
