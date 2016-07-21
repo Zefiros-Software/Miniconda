@@ -27,9 +27,10 @@ if os.get() == "windows" then
     anaBin = "%UserProfile%\zpm-anaconda/Scripts/"
 end
 
-local result, errorCode = os.outputof( string.format( "%s/conda.exe --version", anaBin ) )
+local check =  string.format( "%sconda.exe --version", anaBin ) 
+local result, errorCode = os.outputof( check )
 
-print( result, "Conda status ---------------- ")
+print( "Conda status ----------------", check, result )
 
 -- check if installed
 if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
