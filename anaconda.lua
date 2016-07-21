@@ -22,9 +22,9 @@
 -- @endcond
 --]]
 
-local anaBin = "$HOME/zpm-anaconda/Scripts/"
+local anaBin = "$(HOME)/zpm-anaconda/Scripts/"
 if os.get() == "windows" then
-    anaBin = "%%UserProfile%%\zpm-anaconda/Scripts/"
+    anaBin = "$(UserProfile)\zpm-anaconda/Scripts/"
 end
 
 local check =  string.format( "%sconda.exe --version", anaBin ) 
