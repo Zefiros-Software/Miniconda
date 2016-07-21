@@ -27,7 +27,6 @@ if os.get() == "windows" then
     anaBin = "%UserProfile%\zpm-anaconda/Scripts/"
 end
 
-
 local result, errorCode = os.outputof( string.format( "%s/conda --version", anaBin ) )
 
 -- check if installed
@@ -60,7 +59,6 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
     else
         errorf( "This os '%s' is currently not supported!", os.get() ) 
     end
-
-else
-    os.executef( "%s/conda update conda -y", anaBin )
 end
+
+os.executef( "%s/conda update conda --yes", anaBin )
