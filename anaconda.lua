@@ -22,10 +22,7 @@
 -- @endcond
 --]]
 
-local anaBin = "$(HOME)/zpm-anaconda/Scripts/"
-if os.get() == "windows" then
-    anaBin = "$(UserProfile)\zpm-anaconda/Scripts/"
-end
+local anaBin = os.get() == "windows" and os.getenv("HOME") .. "/zpm-anaconda/Scripts/" or os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/"
 
 local check =  string.format( "%sconda.exe --version", anaBin ) 
 local result, errorCode = os.outputof( check )
@@ -39,7 +36,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
 
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" )
-        os.executef( "%s /InstallationType=JustMe /RegisterPython=0 /S /D=%%UserProfile%%\zpm-anaconda", file )
+        os.executef( "%s /InstallationType=JustMe /RegisterPython=0 /S /D=%%UserProfile%%/zpm-anaconda", file )
 
         os.remove( file )
 
