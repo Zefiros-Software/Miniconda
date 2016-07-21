@@ -64,5 +64,5 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
     end
 
 else
-    os.execute( "conda update conda -y" )
+    os.executef( "%s/conda update conda -y", bin )
 end
