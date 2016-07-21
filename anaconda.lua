@@ -37,7 +37,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
 
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" )
-        os.executef( "%s /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\zpm-anaconda /S", file )
+        os.executef( "%s /InstallationType=JustMe /RegisterPython=0 /S /D=%%UserProfile%%\zpm-anaconda /S", file )
 
         os.remove( file )
 
@@ -46,7 +46,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-MacOSX-x86_64.sh", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-MacOSX-x86_64.sh" )
         os.executef( "%s -p $HOME/zpm-anaconda", file )
-        os.execute( "export PATH=\"$HOME/zpm-anaconda/bin:$PATH\"" )
+        os.execute( "export PATH=%"$HOME/zpm-anaconda/bin:$PATH%"" )
 
         os.remove( file )
 
@@ -55,7 +55,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Linux-x86_64.sh" )
         os.executef( "%s -p $HOME/zpm-anaconda", file )
-        os.execute( "export PATH=\"$HOME/zpm-anaconda/bin:$PATH\"" )
+        os.execute( "export PATH=%"$HOME/zpm-anaconda/bin:$PATH%"" )
 
         os.remove( file )
 
