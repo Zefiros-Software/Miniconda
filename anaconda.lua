@@ -22,7 +22,7 @@
 -- @endcond
 --]]
 
-local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/Scripts/"
+local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
 
 local check =  string.format( "%sconda.exe --version", anaBin ) 
 local result, errorCode = os.outputof( check )
