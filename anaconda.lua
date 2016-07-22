@@ -47,6 +47,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
         os.executef( "bash %s -b -p ~/zpm-anaconda", file )
         os.execute( "unset PYTHONPATH" )
         os.execute( "unset PYTHONHOME" )
+        os.execute( "export PATH=\"~/zpm-anaconda/bin:$PATH\"")
 
         os.remove( file )
 
@@ -57,6 +58,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
         os.executef( "bash %s -b -p ~/zpm-anaconda", file )
         os.execute( "unset PYTHONPATH" )
         os.execute( "unset PYTHONHOME" )
+        os.execute( "export PATH=\"~/zpm-anaconda/bin:$PATH\"")
 
         os.remove( file )
 
