@@ -40,7 +40,7 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
 
         os.remove( file )
 
-    elseif os.get() == "osx" then
+    elseif os.get() == "macosx" then
 
         zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-MacOSX-x86_64.sh", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-MacOSX-x86_64.sh" )
