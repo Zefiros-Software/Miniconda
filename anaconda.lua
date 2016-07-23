@@ -34,11 +34,11 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
 
     if os.get() == "windows" then
 
-        --zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
+        zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
         local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" )
         zpm.assert( os.isfile(file), "Failed to download anaconda!" )
-        os.executef( "start \wait "" %s /InstallationType=JustMe /RegisterPython=0 /S /D=%s\zpm-anaconda", file, os.getenv("UserProfile") )
-        --os.remove( file )
+        os.executef( "start \wait "" %s /InstallationType=JustMe /RegisterPython=0 /S /D=%s\\zpm-anaconda", file, os.getenv("UserProfile") )
+        os.remove( file )
 
     elseif os.get() == "macosx" then
 
