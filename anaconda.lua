@@ -36,9 +36,9 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
 
         print(path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ), zpm.temp)
         --zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
-        local file = path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ):replace( "/", "\\" )
+        local file = path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ):gsub( "/", "\\" )
         os.executef( "start /wait \"\" %s /InstallationType=JustMe /RegisterPython=0 /S /D=%s\\zpm-anaconda", file, os.getenv("UserProfile") )
-        os.remove( file )
+        --os.remove( file )
 
     elseif os.get() == "macosx" then
 
