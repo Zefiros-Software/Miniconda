@@ -62,5 +62,8 @@ if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
     end
 end
 
-os.executef( "conda config --set always_yes yes --set changeps1 no", anaBin )
+local result, errorCode = os.outputof( check )
+zpm.assert( errorCode == 0, "Failed to install anaconda!" )
+
+os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
 os.executef( "%sconda update conda --yes", anaBin )
