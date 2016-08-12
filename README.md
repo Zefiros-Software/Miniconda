@@ -1,22 +1,26 @@
 # Anaconda Installer
-To use the Anaconda installer in [ZPM](zpm.zefiros.eu), just use:
+To use the [Anaconda](www.continuum.io) installer in [ZPM](zpm.zefiros.eu), just use:
 
 ## .package.json
 
 ```json
-"assets": [
-    {
-        "name": "Zefiros-Software/Anaconda",
-        "version": "@head"
-    }
+"modules": [
+    "Zefiros-Software/Anaconda"
 ],
 "install": "<your-installer>.lua"
 ```
 
 ## `<your-installer>.lua`
+Install or update Anaconda:
+```lua
+local ana = require( "Zefiros-Software/Anaconda", "@head" ) -- or an other version
+ana.install()
+```
 
-```json
-dofile( "assets/Zefiros-Software/PlotLib/Zefiros-Software/Anaconda/anaconda.lua" )
+### pip
+To install packages using pip:
+```lua
+ana.pip( "install mkdocs -U" )
 ```
 
 # Installation Folder

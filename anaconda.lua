@@ -22,7 +22,9 @@
 -- @endcond
 --]]
 
-function os.capture(cmd, raw)
+local anaconda = {}
+
+local function os.capture(cmd, raw)
   local f = assert(io.popen(cmd, 'r'))
   local s = assert(f:read('*a'))
   f:close()
@@ -33,47 +35,66 @@ function os.capture(cmd, raw)
   return s
 end
 
-local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
+function anaconda.isInstalled()
 
-local check =  string.format( "%sconda --version", anaBin ) 
-local result, errorCode = os.outputof( check )
+    local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
 
-print( "Conda status ----------------", check, result )
+    local check =  string.format( "%sconda --version", anaBin ) 
+    local result, errorCode = os.outputof( check )
 
--- check if installed
-if result:gsub( "conda %d+%.%d+%.%d+", "" ) == result then
+    print( "Conda status ----------------", check, result )
+
+    -- check if installed
+    return result:gsub( "conda %d+%.%d+%.%d+", "" ) == result
+end
+
+function anaconda.install()
+    if anaconda.isInstalled() == false then
+
+        if os.get() == "windows" then
+            zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
+            local file = path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ):gsub( "/", "\\" )
+
+            print(path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ), zpm.temp, file, os.isfile(file))
+            os.capture( string.format( "start /wait \"\" %s /InstallationType=JustMe /RegisterPython=0 /S /D=%s\\zpm-anaconda", file, os.getenv("UserProfile") ))
+            os.remove( file )
+
+        elseif os.get() == "macosx" then
+
+            zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-MacOSX-x86_64.sh", zpm.temp, "*" )
+            local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-MacOSX-x86_64.sh" )
+            os.executef( "bash %s -b -p ~/zpm-anaconda", file )
+
+            os.remove( file )
+
+        elseif os.get() == "linux" then
+
+            zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh", zpm.temp, "*" )
+            local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Linux-x86_64.sh" )
+            os.executef( "bash %s -b -p ~/zpm-anaconda", file )
+
+            os.remove( file )
+
+        else
+            errorf( "This os '%s' is currently not supported!", os.get() ) 
+        end
+    end
+
+    local result, errorCode = os.outputof( check )
+    zpm.assert( errorCode == 0, "Failed to install anaconda!" )
+
+    os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
+    os.executef( "%sconda update conda --yes", anaBin )
+end
+
+function anaconda.pip( comm )
+    local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
 
     if os.get() == "windows" then
-        zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
-        local file = path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ):gsub( "/", "\\" )
-
-        print(path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ), zpm.temp, file, os.isfile(file))
-        os.capture( string.format( "start /wait \"\" %s /InstallationType=JustMe /RegisterPython=0 /S /D=%s\\zpm-anaconda", file, os.getenv("UserProfile") ))
-        os.remove( file )
-
-    elseif os.get() == "macosx" then
-
-        zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-MacOSX-x86_64.sh", zpm.temp, "*" )
-        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-MacOSX-x86_64.sh" )
-        os.executef( "bash %s -b -p ~/zpm-anaconda", file )
-
-        os.remove( file )
-
-    elseif os.get() == "linux" then
-
-        zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh", zpm.temp, "*" )
-        local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Linux-x86_64.sh" )
-        os.executef( "bash %s -b -p ~/zpm-anaconda", file )
-
-        os.remove( file )
-
+        os.executef( "%spip %s", anaBin, comm )
     else
-        errorf( "This os '%s' is currently not supported!", os.get() ) 
+        os.executef( "%s/python3 %spip %s", anaBin, anaBin, comm )
     end
 end
 
-local result, errorCode = os.outputof( check )
-zpm.assert( errorCode == 0, "Failed to install anaconda!" )
-
-os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
-os.executef( "%sconda update conda --yes", anaBin )
+return anaconda
