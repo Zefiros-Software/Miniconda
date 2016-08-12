@@ -35,9 +35,13 @@ function os.capture(cmd, raw)
   return s
 end
 
+function anaconda.getDir()
+    return os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
+end
+
 function anaconda.isInstalled()
 
-    local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
+    local anaBin = anaconda.getDir()
 
     local check =  string.format( "%sconda --version", anaBin ) 
     local result, errorCode = os.outputof( check )
@@ -49,7 +53,7 @@ function anaconda.isInstalled()
 end
 
 function anaconda.install()
-    if anaconda.isInstalled() then
+    if anaconda.isInstalled() == false then
 
         if os.get() == "windows" then
             zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
@@ -80,15 +84,15 @@ function anaconda.install()
         end
     end
 
-    local result, errorCode = os.outputof( check )
-    zpm.assert( errorCode == 0, "Failed to install anaconda!" )
+    zpm.assert( anaconda.isInstalled(), "Failed to install anaconda!" )
 
+    local anaBin = anaconda.getDir()
     os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
     os.executef( "%sconda update conda --yes", anaBin )
 end
 
 function anaconda.pip( comm )
-    local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
+    local anaBin = anaconda.getDir()
 
     if os.get() == "windows" then
         os.executef( "%spip %s", anaBin, comm )
