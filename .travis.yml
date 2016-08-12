@@ -13,5 +13,6 @@ install:
     - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash
     # annoying pip fix
     - export BOTO_CONFIG=/tmp/bogusvalue
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install g++-multilib -y; fi
 script:
     - premake5 install-package --allow-install --allow-module
