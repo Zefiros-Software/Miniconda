@@ -45,11 +45,11 @@ function anaconda.isInstalled()
     print( "Conda status ----------------", check, result )
 
     -- check if installed
-    return result:gsub( "conda %d+%.%d+%.%d+", "" ) == result
+    return result:gsub( "conda %d+%.%d+%.%d+", "" ) ~= result
 end
 
 function anaconda.install()
-    if anaconda.isInstalled() == false then
+    if anaconda.isInstalled() then
 
         if os.get() == "windows" then
             zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
