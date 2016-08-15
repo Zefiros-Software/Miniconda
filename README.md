@@ -1,5 +1,5 @@
 # Anaconda Installer
-To use the [Anaconda](www.continuum.io) installer in [ZPM](zpm.zefiros.eu), just use:
+To use the [Anaconda](www.continuum.io) installer in [ZPM](http://zpm.zefiros.eu), just use:
 
 # Status
 OS          | Status
