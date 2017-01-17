@@ -15,3 +15,6 @@ install:
     - export BOTO_CONFIG=/tmp/bogusvalue
 script:
     - zpm install-package --allow-install --allow-module
+notifications:
+    slack:
+        secure: "NHE1eEbrHtmrNlWxjbONyzlttTE80B0aWqrZ00BjhpiOdTgG5/3Jrf3tuZcHfEbYtvql+J+cx5M79lZfJm32KG41PPkQLEGbuCgkKaxvJ1n1ZoNhhxjBriSPrpst/+IbcQCic6ZgpxmsAnG+it7pDs0eEdSKGLp87QChOPCHHxmoKqBLXGFF6PqBHE18HfWqgy3x7wf2cGLcB+I4AU4DIF5022ZHfl/uBdzso0ybyqiFdD5DNWaN8rBqv5kzTmBwaEkgORVXwTnwXjUaVn3zKFymKXzw5i5UD9e/pJURtDNKrOa+DNNVjBjrPshqeOPM8ckDG41lZhU0HaDEppC1myFkKINr/pQ3lic369a5kXGE9heQYG5zQYXPqRwpMffXQYur1H31ydmiHpvty0m3hEkD+m/TNnzcXsLBhLNTdlN1Xfu+qQjemp3oA1tocLrdbio26PAEhP/ckeeZEBs9wH0Y1tQISzjJZd16VRXyPeLZ/tu3FBKqJiGnUTn8nQRehD0UJZn6YaFSdU6EH9LDIE9Rhzy7DjWtnTLmkBv/BUM0SN8DPLHMhglVp+lFK6MYQW26qEv9djne7BOJtSqMbi9HsBuatpG85E1bQwEd9vHLHtXoAR5WdmhBTpq5APlw8avlRThkWJUnKxr1k1J+kf3XW7NtyMzIov3JnQJBRy8="
