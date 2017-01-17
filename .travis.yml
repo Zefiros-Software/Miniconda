@@ -14,4 +14,4 @@ install:
     # annoying pip fix
     - export BOTO_CONFIG=/tmp/bogusvalue
 script:
-    - premake5 install-package --allow-install --allow-module
+    - zpm install-package --allow-install --allow-module

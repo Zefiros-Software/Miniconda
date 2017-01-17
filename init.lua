@@ -56,25 +56,24 @@ function anaconda.install()
     if anaconda.isInstalled() == false then
 
         if os.get() == "windows" then
-            zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Windows-x86_64.exe", zpm.temp, "*" )
-            local file = path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ):gsub( "/", "\\" )
+            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe", zpm.temp, "*" )
+            local file = path.join( zpm.temp, "Miniconda3-latest-Windows-x86_64.exe" ):gsub( "/", "\\" )
 
-            print(path.join( zpm.temp, "Anaconda3-4.1.1-Windows-x86_64.exe" ), zpm.temp, file, os.isfile(file))
-            os.capture( string.format( "start /wait \"\" %s /InstallationType=JustMe /RegisterPython=0 /S /D=%s\\zpm-anaconda", file, os.getenv("UserProfile") ))
+            os.capture( string.format( "start /wait \"\" %s /RegisterPython=0 /S /D=%s\\zpm-anaconda", file, os.getenv("UserProfile") ))
             os.remove( file )
 
         elseif os.get() == "macosx" then
 
-            zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-MacOSX-x86_64.sh", zpm.temp, "*" )
-            local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-MacOSX-x86_64.sh" )
+            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh", zpm.temp, "*" )
+            local file = string.format( "%s/%s", zpm.temp, "Miniconda3-latest-MacOSX-x86_64.sh" )
             os.executef( "bash %s -b -p ~/zpm-anaconda", file )
 
             os.remove( file )
 
         elseif os.get() == "linux" then
 
-            zpm.util.download( "http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh", zpm.temp, "*" )
-            local file = string.format( "%s/%s", zpm.temp, "Anaconda3-4.1.1-Linux-x86_64.sh" )
+            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86.sh", zpm.temp, "*" )
+            local file = string.format( "%s/%s", zpm.temp, "Miniconda3-latest-Linux-x86.sh" )
             os.executef( "bash %s -b -p ~/zpm-anaconda", file )
 
             os.remove( file )
@@ -98,6 +97,16 @@ function anaconda.pip( comm )
         os.executef( "%spip %s", anaBin, comm )
     else
         os.executef( "%s/python3 %spip %s", anaBin, anaBin, comm )
+    end
+end
+
+function anaconda.conda( comm )
+    local anaBin = anaconda.getDir()
+
+    if os.get() == "windows" then
+        os.executef( "%sconda %s", anaBin, comm )
+    else
+        os.executef( "%spython3 %sconda %s", anaBin, anaBin, comm )
     end
 end
 
