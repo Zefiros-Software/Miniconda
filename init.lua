@@ -72,8 +72,8 @@ function anaconda.install()
 
         elseif os.get() == "linux" then
 
-            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86.sh", zpm.temp, "*" )
-            local file = string.format( "%s/%s", zpm.temp, "Miniconda3-latest-Linux-x86.sh" )
+            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh", zpm.temp, "*" )
+            local file = string.format( "%s/%s", zpm.temp, "Miniconda3-latest-Linux-x86_64.sh" )
             os.executef( "bash %s -b -p ~/zpm-anaconda", file )
 
             os.remove( file )
