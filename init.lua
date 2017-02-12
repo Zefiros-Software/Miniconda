@@ -88,19 +88,6 @@ function anaconda.install()
     local anaBin = anaconda.getDir()
     os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
     os.executef( "%sconda update conda --yes", anaBin )
-    anaconda.pip('install pew -U')
-    anaconda.pip('install pipenv -U')
-end
-
-function anaconda.pipenv(comm)
-    comm = comm or "install"
-    local anaBin = anaconda.getDir()
-
-    if os.get() == "windows" then
-        os.executef( "%spipenv %s", anaBin, comm )
-    else
-        os.executef( "%s/python3 %spipenv %s", anaBin, anaBin, comm )
-    end
 end
 
 function anaconda.pip( comm )
