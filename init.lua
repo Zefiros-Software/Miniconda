@@ -88,8 +88,8 @@ function anaconda.install()
     local anaBin = anaconda.getDir()
     os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
     os.executef( "%sconda update conda --yes", anaBin )
-    anaconda.pip('install --update pew')
-    anaconda.pip('install --update pipenv')
+    anaconda.pip('install pew -U')
+    anaconda.pip('install pipenv -U')
 end
 
 function anaconda.pipenv(comm)
