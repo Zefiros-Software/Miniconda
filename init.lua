@@ -46,7 +46,7 @@ function anaconda.isInstalled()
     local check =  string.format( "%sconda --version", anaBin ) 
     local result, errorCode = os.outputof( check )
 
-    print( "Conda status ----------------", check, result )
+    --print( "Conda status ----------------", check, result )
 
     -- check if installed
     return result:gsub( "conda %d+%.%d+%.%d+", "" ) ~= result
@@ -88,6 +88,19 @@ function anaconda.install()
     local anaBin = anaconda.getDir()
     os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
     os.executef( "%sconda update conda --yes", anaBin )
+    anaconda.pip('install --update pew')
+    anaconda.pip('install --update pipenv')
+end
+
+function anaconda.pipenv(comm)
+    comm = comm or "install"
+    local anaBin = anaconda.getDir()
+
+    if os.get() == "windows" then
+        os.executef( "%spipenv %s", anaBin, comm )
+    else
+        os.executef( "%s/python3 %spipenv %s", anaBin, anaBin, comm )
+    end
 end
 
 function anaconda.pip( comm )
