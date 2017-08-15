@@ -1,6 +1,0 @@
-{
-    "name": "Zefiros-Software/Anaconda",
-    "dev": {
-        "install": "install/anaconda.lua"
-    }
-}

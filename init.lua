@@ -22,92 +22,78 @@
 -- @endcond
 --]]
 
-local anaconda = {}
+miniconda = {}
 
-function os.capture(cmd, raw)
-  local f = assert(io.popen(cmd, 'r'))
-  local s = assert(f:read('*a'))
-  f:close()
-  if raw then return s end
-  s = string.gsub(s, '^%s+', '')
-  s = string.gsub(s, '%s+$', '')
-  s = string.gsub(s, '[\n\r]+', ' ')
-  return s
+function miniconda.getDir()
+    return os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-miniconda/Scripts/" or "~/zpm-miniconda/bin/"
 end
 
-function anaconda.getDir()
-    return os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
+function miniconda.isInstalled()
+
+    local anaBin = miniconda.getDir()
+
+    local check =  string.format("%sconda --version", anaBin) 
+    local result, errorCode = os.outputof(check)
+
+    return result:gsub("conda %d+%.%d+%.%d+", "") ~= result
 end
 
-function anaconda.isInstalled()
+function miniconda.install()
+    if not miniconda.isInstalled() then
 
-    local anaBin = anaconda.getDir()
+        if os.ishost("windows") then
+            zpm.util.download("https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe", zpm.temp, "*")
+            local file = path.join(zpm.temp, "Miniconda3-latest-Windows-x86_64.exe" ):gsub( "/", "\\")
 
-    local check =  string.format( "%sconda --version", anaBin ) 
-    local result, errorCode = os.outputof( check )
+            os.capturef("start /wait \"\" %s /RegisterPython=0 /AddToPath=0 /S /D=%s\\zpm-miniconda", file, os.getenv("UserProfile")))
+            os.remove(file)
 
-    --print( "Conda status ----------------", check, result )
+        elseif os.ishost("macosx") then
 
-    -- check if installed
-    return result:gsub( "conda %d+%.%d+%.%d+", "" ) ~= result
-end
-
-function anaconda.install()
-    if anaconda.isInstalled() == false then
-
-        if os.get() == "windows" then
-            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe", zpm.temp, "*" )
-            local file = path.join( zpm.temp, "Miniconda3-latest-Windows-x86_64.exe" ):gsub( "/", "\\" )
-
-            os.capture( string.format( "start /wait \"\" %s /RegisterPython=0 /AddToPath=0 /S /D=%s\\zpm-anaconda", file, os.getenv("UserProfile") ))
-            os.remove( file )
-
-        elseif os.get() == "macosx" then
-
-            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh", zpm.temp, "*" )
+            zpm.util.download("https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh", zpm.temp, "*" )
             local file = string.format( "%s/%s", zpm.temp, "Miniconda3-latest-MacOSX-x86_64.sh" )
-            os.executef( "bash %s -b -p ~/zpm-anaconda", file )
+            os.executef("bash %s -b -p ~/zpm-miniconda", file)
 
-            os.remove( file )
+            os.remove(file)
 
-        elseif os.get() == "linux" then
+        elseif os.ishost("linux") then
 
-            zpm.util.download( "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh", zpm.temp, "*" )
+            zpm.util.download("https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh", zpm.temp, "*")
             local file = string.format( "%s/%s", zpm.temp, "Miniconda3-latest-Linux-x86_64.sh" )
-            os.executef( "bash %s -b -p ~/zpm-anaconda", file )
+            os.executef("bash %s -b -p ~/zpm-miniconda", file)
 
-            os.remove( file )
+            os.remove(file)
 
         else
-            errorf( "This os '%s' is currently not supported!", os.get() ) 
+            errorf("This os '%s' is currently not supported!", os.host()) 
         end
     end
 
-    zpm.assert( anaconda.isInstalled(), "Failed to install anaconda!" )
+    zpm.assert(miniconda.isInstalled(), "Failed to install miniconda!")
 
-    local anaBin = anaconda.getDir()
-    os.executef( "%sconda config --set always_yes yes --set changeps1 no", anaBin )
-    os.executef( "%sconda update conda --yes", anaBin )
+    local anaBin = miniconda.getDir()
+    os.executef("%sconda config --set always_yes yes --set changeps1 no", anaBin)
+    os.executef("%sconda update conda --yes", anaBin)
 end
 
-function anaconda.pip( comm )
-    local anaBin = anaconda.getDir()
+function miniconda.pip(comm)
+    local anaBin = miniconda.getDir()
 
-    if os.get() == "windows" then
+    if os.ishost("windows") then
         os.executef( "%spip %s", anaBin, comm )
     else
         os.executef( "%s/python3 %spip %s", anaBin, anaBin, comm )
     end
 end
 
-function anaconda.conda( comm )
-    local anaBin = anaconda.getDir()
+function miniconda.conda( comm )
+    local anaBin = miniconda.getDir()
 
-    if os.get() == "windows" then
+    if os.ishost("windows") then
         os.executef( "%sconda %s", anaBin, comm )
     else
         os.executef( "%spython3 %sconda %s", anaBin, anaBin, comm )
     end
 end
 
-return anaconda
+return miniconda
