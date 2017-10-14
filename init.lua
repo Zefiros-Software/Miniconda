@@ -168,10 +168,13 @@ end
 function miniconda._venvExists()
     
     local dir, code = miniconda.opipenv("--venv")
-    print(code, dir)
     return code == 0 and os.isdir(dir)
 end
 
+function miniconda._getCondaRequirements(dir)
+
+    return path.join(dir, "conda-requirements.txt")
+end
 
 function miniconda._installDirectory(dir)
 
@@ -193,12 +196,12 @@ function miniconda._installDirectory(dir)
 
             installCondaPackages = true
         end
-        print(path.join(miniconda.WORKING_DIR, "conda-requirements.txt"), os.isfile(path.join(miniconda.WORKING_DIR, "conda-requirements.txt")) )
-        if installCondaPackages and os.isfile(path.join(dir, "conda-requirements.txt")) then
+
+        if installCondaPackages and os.isfile(miniconda._getCondaRequirements(dir)) then
             miniconda.virtualenv.pip("install auxlib ruamel_yaml requests pycosat")
             miniconda.virtualenv.pip("install conda==4.2.7")
             miniconda.virtualenv.conda("install conda")
-            for s in io.lines(path.join(dir, "conda-requirements.txt")) do
+            for s in io.lines(miniconda._getCondaRequirements(dir)) do
                 miniconda.virtualenv.conda( ("install --yes %s"):format(s) )
             end
         end
@@ -227,6 +230,11 @@ premake.override(_G, "project", function(base, name)
         local result, code = miniconda.opipenv("--venv")
 
         miniconda._installDirectory(zpm.util.getRelativeOrAbsoluteDir( _WORKING_DIR, zpm.meta.package.location ))
+
+        local python_install = iif(os.ishost("windows") and not os.isfile(miniconda._getCondaRequirements(zpm.meta.package.location)), "Scripts/python", "python")
+        if os.ishost("windows") then
+            python_install = python_install .. ".exe"
+        end
         
         --print(result, code, name)
         os.chdir(current)
@@ -234,7 +242,7 @@ premake.override(_G, "project", function(base, name)
             result = result:gsub("\\", "/")
             defines {
                 "MINICONDA_PATH=\"" ..  result .."\"",
-                "MINICONDA_PYTHON_PATH=\"" ..  result .. "/" .. iif(os.ishost("windows"), "Scripts/python.exe", "python") .."\"",
+                "MINICONDA_PYTHON_PATH=\"" ..  result .. "/" .. python_install .."\"",
             }
         end
     end
