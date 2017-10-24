@@ -186,13 +186,14 @@ function miniconda._installDirectory(dir)
         os.chdir(dir)
 
 
+        local dev = iif(dir == _MAIN_SCRIPT_DIR, "--dev", "")
         local installCondaPackages = false
         if not miniconda._venvExists() then
-            miniconda.pipenv(string.format("install --python=\"%s\"", miniconda.getPython()))
+            miniconda.pipenv(string.format("install --python=\"%s\" %s", miniconda.getPython(), dev))
 
             installCondaPackages = true
         elseif zpm.cli.update() then
-            miniconda.pipenv(string.format("update --python=\"%s\"", miniconda.getPython()))
+            miniconda.pipenv(string.format("update --python=\"%s\" %s", miniconda.getPython(), dev))
 
             installCondaPackages = true
         end
