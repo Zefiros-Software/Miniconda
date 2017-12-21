@@ -216,7 +216,7 @@ end
 
 function miniconda.onLoad()
 
-    --miniconda.install()
+    miniconda.install()
 end
 
 -- override
