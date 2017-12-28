@@ -183,13 +183,13 @@ end
 
 
 miniconda._existsCache = {}
-function miniconda._venvExists()
+function miniconda._venvExists(dir)
     if miniconda._existsCache[dir] then
         return miniconda._existsCache[dir]
     end
 
-    local dir, code = miniconda.opipenv("--venv")
-    miniconda._existsCache[dir] = code == 0 and os.isdir(dir)
+    local vdir, code = miniconda.opipenv("--venv")
+    miniconda._existsCache[dir] = code == 0 and os.isdir(vdir)
     return miniconda._existsCache[dir]
 end
 
@@ -210,7 +210,7 @@ function miniconda._installDirectory(dir)
         
         local dev = iif(dir == _MAIN_SCRIPT_DIR, "--dev", "")
         local installCondaPackages = false
-        if not miniconda._venvExists() or zpm.cli.force() then
+        if not miniconda._venvExists(dir) or zpm.cli.force() then
             miniconda.pipenv(string.format("install --python=\"%s\" %s", miniconda.getPython(), dev))
             
             installCondaPackages = true
