@@ -111,7 +111,7 @@ miniconda._venvCache = {}
 function miniconda.venv()
     local cdir = os.getcwd()
     if miniconda._venvCache[cdir] then
-        return miniconda._venvCache[dir][1], miniconda._venvCache[dir][2]
+        return miniconda._venvCache[cdir][1], miniconda._venvCache[cdir][2]
     end
 
     local dir, code = miniconda.opipenv("--venv")
