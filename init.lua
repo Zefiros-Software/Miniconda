@@ -107,6 +107,18 @@ function miniconda.opipenv(comm)
     return miniconda.pipenv(comm, os.outputoff)
 end
 
+miniconda._venvCache = {}
+function miniconda.venv()
+    local dir = os.getcwd()
+    if miniconda._venvCache[dir] then
+        return miniconda._venvCache[dir][1], miniconda._venvCache[dir][2]
+    end
+
+    local dir, code = miniconda.opipenv("--venv")
+    miniconda._venvCache[dir] = {dir, code}
+    return dir, code
+end
+
 function miniconda.pip(comm, exec)
     exec = iif(exec ~= nil, exec, os.executef)
     local anaBin = miniconda.getDir()
@@ -169,10 +181,16 @@ function miniconda._isPythonEnabledDirectory(dir)
         os.isfile(path.join(dir, "conda-requirements"))
 end
 
+
+miniconda._existsCache = {}
 function miniconda._venvExists()
-    
+    if miniconda._existsCache[dir] then
+        return miniconda._existsCache[dir]
+    end
+
     local dir, code = miniconda.opipenv("--venv")
-    return code == 0 and os.isdir(dir)
+    miniconda._existsCache[dir] = code == 0 and os.isdir(dir)
+    return miniconda._existsCache[dir]
 end
 
 function miniconda._getCondaRequirements(dir)
@@ -231,7 +249,7 @@ premake.override(_G, "project", function(base, name)
             
             local current = os.getcwd()
             os.chdir(zpm.meta.package.location)
-            local result, code = miniconda.opipenv("--venv")
+            local result, code = miniconda.venv()
             
             miniconda._installDirectory(zpm.util.getRelativeOrAbsoluteDir(_WORKING_DIR, zpm.meta.package.location))
             
