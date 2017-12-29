@@ -115,7 +115,9 @@ function miniconda.venv()
     end
 
     local dir, code = miniconda.opipenv("--venv")
-    miniconda._venvCache[cdir] = {dir, code}
+    if code == 0 then
+        miniconda._venvCache[cdir] = {dir, code}
+    end
     return dir, code
 end
 
@@ -182,15 +184,9 @@ function miniconda._isPythonEnabledDirectory(dir)
 end
 
 
-miniconda._existsCache = {}
 function miniconda._venvExists(dir)
-    if miniconda._existsCache[dir] then
-        return miniconda._existsCache[dir]
-    end
-
     local vdir, code = miniconda.opipenv("--venv")
-    miniconda._existsCache[dir] = code == 0 and os.isdir(vdir)
-    return miniconda._existsCache[dir]
+    return code == 0 and os.isdir(vdir)
 end
 
 function miniconda._getCondaRequirements(dir)
