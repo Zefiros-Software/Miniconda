@@ -151,7 +151,7 @@ function miniconda.virtualenv.pipenv(comm, exec)
     if os.ishost("windows") then
         result, code = exec("set PATH=%%PATH%%;%s; && pipenv %s", miniconda.getDir(), comm)
     else
-        result, code = exec("PATH=$PATH:%s && %s/python pipenv %s", miniconda.getDir(), comm)
+        result, code = exec("PATH=$PATH:%s && %s/python pipenv %s", miniconda.getDir(), miniconda.getDir(), comm)
     end
     
     os.chdir(current)
