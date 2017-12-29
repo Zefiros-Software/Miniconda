@@ -95,9 +95,9 @@ function miniconda.pipenv(comm, exec)
     local result, code
     local anaBin = miniconda.getDir()
     if os.ishost("windows") then
-        result, code = exec("set PATH=%%PATH%%;%s; && %s/pipenv %s", anaBin, anaBin, comm)
+        result, code = exec("set PATH=%%PATH%%;%s; && pipenv %s", anaBin, comm)
     else
-        result, code = exec("PATH=$PATH:%s && %s/python %s/pipenv %s", anaBin, anaBin, anaBin, comm)
+        result, code = exec("PATH=$PATH:%s && pipenv %s", anaBin, comm)
     end
     return result, code
 end
