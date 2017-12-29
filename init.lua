@@ -65,7 +65,7 @@ function miniconda.install()
             
             local file = path.join(zpm.env.getTempDirectory(), "Miniconda3-latest-MacOSX-x86_64.sh")
             http.download("https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh", file)
-            os.executef("bash %s -b -p %s", file, miniconda.installDir())
+            os.executef("bash %s -b -f -p %s", file, miniconda.installDir())
             
             os.remove(file)
         
@@ -73,7 +73,7 @@ function miniconda.install()
             
             local file = path.join(zpm.env.getTempDirectory(), "Miniconda3-latest-Linux-x86_64.sh")
             http.download("https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh", file)
-            os.executef("bash %s -b -p %s", file, miniconda.installDir())
+            os.executef("bash %s -b -f -p %s", file, miniconda.installDir())
             
             os.remove(file)
         
@@ -151,7 +151,7 @@ function miniconda.virtualenv.pipenv(comm, exec)
     if os.ishost("windows") then
         result, code = exec("set PATH=%%PATH%%;%s; && pipenv %s", miniconda.getDir(), comm)
     else
-        result, code = exec("PATH=$PATH:%s && %s/pipenv %s", miniconda.getDir(), miniconda.getDir(), comm)
+        result, code = exec("PATH=$PATH:%s && pipenv %s", miniconda.getDir(), comm)
     end
     
     os.chdir(current)
