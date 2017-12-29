@@ -39,7 +39,7 @@ end
 
 function miniconda.getPython()
     
-    return string.format("%s/python%s", miniconda.installDir(), iif(os.ishost("windows"), ".exe", ""))
+    return string.format("%s/python%s", miniconda.getDir(), iif(os.ishost("windows"), ".exe", ""))
 end
 
 function miniconda.isInstalled()
