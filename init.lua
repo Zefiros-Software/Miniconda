@@ -253,7 +253,7 @@ premake.override(_G, "project", function(base, name)
             
             miniconda._installDirectory(zpm.util.getRelativeOrAbsoluteDir(_WORKING_DIR, zpm.meta.package.location))
             
-            local python_install = iif(os.ishost("windows") and not os.isfile(miniconda._getCondaRequirements(zpm.meta.package.location)), "Scripts/python", "bin/python")
+            local python_install = iif(os.ishost("windows") and not os.isfile(miniconda._getCondaRequirements(zpm.meta.package.location)), "Scripts/python", "python")
             if os.ishost("windows") then
                 python_install = python_install .. ".exe"
             end
