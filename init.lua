@@ -217,6 +217,7 @@ function miniconda._installDirectory(dir)
         end
         
         if installCondaPackages and os.isfile(miniconda._getCondaRequirements(dir)) then
+            miniconda.virtualenv.pipenv("run rm $(which python3)")
             miniconda.virtualenv.pip("install auxlib ruamel_yaml requests pycosat")
             miniconda.virtualenv.pip("install conda==4.2.7")
             miniconda.virtualenv.conda("install conda")
