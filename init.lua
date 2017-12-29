@@ -97,7 +97,7 @@ function miniconda.pipenv(comm, exec)
     if os.ishost("windows") then
         result, code = exec("set PATH=%%PATH%%;%s; && %s/pipenv %s", miniconda.getDir(), anaBin, comm)
     else
-        result, code = exec("PATH=$PATH:%s && %s/python %s/pipenv %s", miniconda.installDir(), anaBin, comm)
+        result, code = exec("PATH=$PATH:%s && %s/python %s/pipenv %s", miniconda.getDir(), anaBin, comm)
     end
     return result, code
 end
@@ -126,7 +126,7 @@ function miniconda.pip(comm, exec)
     if os.ishost("windows") then
         exec("set PATH=%%PATH%%;%s; && %s/pip %s", miniconda.getDir(), anaBin, comm)
     else
-        exec("PATH=$PATH:%s && %s/python %/spip %s", miniconda.installDir(), miniconda.installDir(), anaBin, comm)
+        exec("PATH=$PATH:%s && %s/python %/spip %s", miniconda.getDir(), miniconda.getDir(), anaBin, comm)
     end
 end
 
@@ -137,7 +137,7 @@ function miniconda.conda(comm, exec)
     if os.ishost("windows") then
         exec("set PATH=%%PATH%%;%s; && %s/conda %s", miniconda.getDir(), anaBin, comm)
     else
-        exec("PATH=$PATH:%s && %s/python %s/conda %s", miniconda.installDir(), miniconda.installDir(), anaBin, comm)
+        exec("PATH=$PATH:%s && %s/python %s/conda %s", miniconda.getDir(), miniconda.getDir(), anaBin, comm)
     end
 end
 
@@ -151,7 +151,7 @@ function miniconda.virtualenv.pipenv(comm, exec)
     if os.ishost("windows") then
         result, code = exec("set PATH=%%PATH%%;%s; && pipenv %s", miniconda.getDir(), comm)
     else
-        result, code = exec("PATH=$PATH:%s && %s/python pipenv %s", miniconda.installDir(), comm)
+        result, code = exec("PATH=$PATH:%s && %s/python pipenv %s", miniconda.getDir(), comm)
     end
     
     os.chdir(current)
@@ -253,7 +253,7 @@ premake.override(_G, "project", function(base, name)
             
             miniconda._installDirectory(zpm.util.getRelativeOrAbsoluteDir(_WORKING_DIR, zpm.meta.package.location))
             
-            local python_install = iif(os.ishost("windows") and not os.isfile(miniconda._getCondaRequirements(zpm.meta.package.location)), "Scripts/python", "python")
+            local python_install = iif(os.ishost("windows") and not os.isfile(miniconda._getCondaRequirements(zpm.meta.package.location)), "Scripts/python", "bin/python")
             if os.ishost("windows") then
                 python_install = python_install .. ".exe"
             end
