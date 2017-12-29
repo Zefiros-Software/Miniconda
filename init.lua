@@ -95,9 +95,9 @@ function miniconda.pipenv(comm, exec)
     local result, code
     local anaBin = miniconda.getDir()
     if os.ishost("windows") then
-        result, code = exec("set PATH=%%PATH%%;%s; && %s/pipenv %s", miniconda.getDir(), anaBin, comm)
+        result, code = exec("set PATH=%%PATH%%;%s; && %s/pipenv %s", anaBin, anaBin, comm)
     else
-        result, code = exec("PATH=$PATH:%s && %s/python %s/pipenv %s", miniconda.getDir(), anaBin, comm)
+        result, code = exec("PATH=$PATH:%s && %s/python %s/pipenv %s", anaBin, anaBin, anaBin, comm)
     end
     return result, code
 end
@@ -124,9 +124,9 @@ function miniconda.pip(comm, exec)
     local anaBin = miniconda.getDir()
     
     if os.ishost("windows") then
-        exec("set PATH=%%PATH%%;%s; && %s/pip %s", miniconda.getDir(), anaBin, comm)
+        exec("set PATH=%%PATH%%;%s; && %s/pip %s", anaBin, anaBin, comm)
     else
-        exec("PATH=$PATH:%s && %s/python %s/pip %s", miniconda.getDir(), miniconda.getDir(), anaBin, comm)
+        exec("PATH=$PATH:%s && %s/python %s/pip %s", anaBin, anaBin, anaBin, comm)
     end
 end
 
@@ -135,9 +135,9 @@ function miniconda.conda(comm, exec)
     local anaBin = miniconda.getDir()
     
     if os.ishost("windows") then
-        exec("set PATH=%%PATH%%;%s; && %s/conda %s", miniconda.getDir(), anaBin, comm)
+        exec("set PATH=%%PATH%%;%s; && %s/conda %s", anaBin, anaBin, comm)
     else
-        exec("PATH=$PATH:%s && %s/python %s/conda %s", miniconda.getDir(), miniconda.getDir(), anaBin, comm)
+        exec("PATH=$PATH:%s && %s/python %s/conda %s", anaBin, anaBin, anaBin, comm)
     end
 end
 
