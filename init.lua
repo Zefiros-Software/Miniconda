@@ -126,7 +126,7 @@ function miniconda.pip(comm, exec)
     if os.ishost("windows") then
         exec("set PATH=%%PATH%%;%s; && %s/pip %s", miniconda.getDir(), anaBin, comm)
     else
-        exec("PATH=$PATH:%s && %s/python %/spip %s", miniconda.getDir(), miniconda.getDir(), anaBin, comm)
+        exec("PATH=$PATH:%s && %s/python %s/pip %s", miniconda.getDir(), miniconda.getDir(), anaBin, comm)
     end
 end
 
