@@ -226,6 +226,7 @@ function miniconda._installDirectory(dir)
             miniconda.virtualenv.pip("install auxlib ruamel_yaml requests pycosat")
             miniconda.virtualenv.pip("install conda==4.2.7")
             miniconda.virtualenv.conda("install -f conda")
+            miniconda.virtualenv.conda("update conda")
             for s in io.lines(miniconda._getCondaRequirements(dir)) do
                 miniconda.virtualenv.conda(("install --yes %s"):format(s))
             end
