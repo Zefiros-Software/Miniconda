@@ -34,7 +34,7 @@ function miniconda.installDir()
 end
 
 function miniconda.getDir()
-    return path.join(miniconda.installDir(), iif(os.ishost("windows"), "Scripts", "bin"))
+    return path.join(miniconda.installDir(), iif(os.ishost("windows"), "Scripts/bin", "bin"))
 end
 
 function miniconda.getPython()
