@@ -39,7 +39,13 @@ end
 
 function miniconda.getPython()
     
-    return string.format("%s/python%s", miniconda.getDir(), iif(os.ishost("windows"), ".exe", ""))
+    return string.format("%s/python%s", miniconda.getPythonDir(), iif(os.ishost("windows"), ".exe", ""))
+end
+
+
+function miniconda.getPythonDir()
+    
+    return path.join(miniconda.installDir(), iif(os.ishost("windows"), "", "bin"))
 end
 
 function miniconda.isInstalled()
@@ -207,11 +213,11 @@ function miniconda._installDirectory(dir)
         local dev = iif(dir == _MAIN_SCRIPT_DIR, "--dev", "")
         local installCondaPackages = false
         if not miniconda._venvExists(dir) or zpm.cli.force() then
-            miniconda.pipenv(string.format("install --python=\"%s\" %s", miniconda.getPython(), dev))
+            miniconda.pipenv(string.format("install --python=\"%s\" %s", miniconda.getPythonDir(), dev))
             
             installCondaPackages = true
         elseif zpm.cli.update() then
-            miniconda.pipenv(string.format("update --python=\"%s\" %s", miniconda.getPython(), dev))
+            miniconda.pipenv(string.format("update --python=\"%s\" %s", miniconda.getPythonDir(), dev))
             
             installCondaPackages = true
         end
