@@ -122,14 +122,13 @@ end
 
 function miniconda._isPythonEnabledDirectory(dir)
     
-    return os.isfile(path.join(dir, "Pipfile")) or
-        os.isfile(path.join(dir, "requirements.txt")) or
-        os.isfile(path.join(dir, ".environment.yml"))
+    return os.isfile(path.join(dir, "environment.yml"))
 end
 
 function miniconda.installProject()
     
     local name = miniconda.virtualenv.name()
+    print(name, "@@@@@@@@")
     if miniconda.dirs[name] == nil then
         miniconda.dirs[name] = true
 
