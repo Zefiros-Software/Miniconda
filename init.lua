@@ -151,8 +151,8 @@ end
 function miniconda.virtualenv.name()
 
 
-    if not zpm.meta.package['name'] then
-        local location = zpm.meta.package.location
+    if not zpm.meta.package['name'] or zpm.meta.package['hash'] == "LOCAL" then
+        local location = path.getabsolute(zpm.meta.package.location, _MAIN_SCRIPT_DIR)
         if location:endswith("/") then
             location = location:sub(1, -2)
         end
@@ -167,14 +167,15 @@ end
 
 function miniconda.virtualenv.exists()
 
-    local output = miniconda.conda(("env list"):format(miniconda.virtualenv.name()), os.outputoff)
+    local output = miniconda.conda("env list", os.outputoff)
     return output:contains(miniconda.virtualenv.name())
 end
 
 function miniconda.virtualenv.location()
 
     local name = miniconda.virtualenv.name()
-    local output = miniconda.conda(("env list"):format(miniconda.virtualenv.name()), os.outputoff)
+    print(name, "$$$$$$$$$")
+    local output = miniconda.conda("env list", os.outputoff)
     for line in output:gmatch("([^\n]*)\n?") do
         if not line:startswith("#") then
             words = {}
