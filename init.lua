@@ -133,17 +133,19 @@ function miniconda.installProject()
 
         local envFile = path.join(zpm.meta.package.location, 'environment.yml')
         
-        if miniconda.virtualenv.exists() and zpm.cli.force() then
-            miniconda.conda(("env remove -n %s"):format(miniconda.virtualenv.name()))            
-        else
-            return
+        local exists = miniconda.virtualenv.exists()
+        if exists and zpm.cli.force() then
+            miniconda.conda(("env remove -n %s"):format(miniconda.virtualenv.name()))         
+            exists = false
         end
 
-        if os.isfile(envFile) then
-        
-            miniconda.conda(("env create -n %s -f %s"):format(miniconda.virtualenv.name(), envFile))
-        else
-            miniconda.conda(("env create -n %s"):format(miniconda.virtualenv.name()))
+        if not exists then
+            if os.isfile(envFile) then
+            
+                miniconda.conda(("env create -n %s -f %s"):format(miniconda.virtualenv.name(), envFile))
+            else
+                miniconda.conda(("env create -n %s"):format(miniconda.virtualenv.name()))
+            end
         end
     end
 end
@@ -174,8 +176,8 @@ end
 function miniconda.virtualenv.location()
 
     local name = miniconda.virtualenv.name()
-    print(name, "$$$$$$$$$")
     local output = miniconda.conda("env list", os.outputoff)
+    print(name, output, "$$$$$$$$$")
     for line in output:gmatch("([^\n]*)\n?") do
         if not line:startswith("#") then
             words = {}
