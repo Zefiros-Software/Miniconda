@@ -128,7 +128,6 @@ end
 function miniconda.installProject()
     
     local name = miniconda.virtualenv.name()
-    print(name, "@@@@@@@@")
     if miniconda.dirs[name] == nil then
         miniconda.dirs[name] = true
 
@@ -151,11 +150,19 @@ end
 
 function miniconda.virtualenv.name()
 
+
     if not zpm.meta.package['name'] then
-        return string.format("%s-%s", path.getname(zpm.meta.package.location), string.sha1(zpm.meta.package.location):sub(1, 6))
+        local location = zpm.meta.package.location
+        if location:endswith("/") then
+            location = location:sub(1, -2)
+        end
+
+        return string.format("%s-%s", path.getname(location), string.sha1(location):sub(1, 6))
     end
 
-    return string.format("%s-%s", path.getname(zpm.meta.package.location), string.sha1(zpm.meta.package.tag))
+    print(table.tostring(zpm.meta.package))
+
+    return string.format("%s-%s", zpm.meta.package.name, zpm.meta.package.tag)
 end
 
 function miniconda.virtualenv.exists()
