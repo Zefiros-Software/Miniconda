@@ -162,8 +162,6 @@ function miniconda.virtualenv.name()
         return string.format("%s-%s", path.getname(location), string.sha1(location):sub(1, 6))
     end
 
-    print(table.tostring(zpm.meta.package))
-
     return string.format("%s-%s", zpm.meta.package.name, zpm.meta.package.tag)
 end
 
@@ -177,7 +175,6 @@ function miniconda.virtualenv.location()
 
     local name = miniconda.virtualenv.name()
     local output = miniconda.conda("env list", os.outputoff)
-    print(name, output, "$$$$$$$$$")
     for line in output:gmatch("([^\n]*)\n?") do
         if not line:startswith("#") then
             words = {}
@@ -207,9 +204,8 @@ premake.override(_G, "project", function(base, name)
         miniconda.installProject()
         local result = miniconda.virtualenv.location()
         local python_install = iif(os.ishost('windows'), 'python.exe', 'bin/python')
-        
+
         result = result:gsub("\\", "/")
-        print("MINICONDA_PYTHON_PATH=\"" .. result .. "/" .. python_install .. "\"", "@@@@@@@@@@@@@@")
         defines {
             "MINICONDA_PATH=\"" .. miniconda.virtualenv.location() .. "\"",
             "MINICONDA_PYTHON_PATH=\"" .. result .. "/" .. python_install .. "\"",
