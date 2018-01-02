@@ -79,7 +79,6 @@ function miniconda.install()
         miniconda.conda("config --set always_yes yes --set changeps1 no")
         
         miniconda.conda("update setuptools conda", os.outputoff)
-        miniconda.pip("install --upgrade pipenv", os.outputoff)
     end
     
     zpm.assert(miniconda.isInstalled(), "Failed to install miniconda!")
