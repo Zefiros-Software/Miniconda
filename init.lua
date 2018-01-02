@@ -206,11 +206,8 @@ premake.override(_G, "project", function(base, name)
 
         miniconda.installProject()
         local result = miniconda.virtualenv.location()
-        local python_install = 'python'
-        if os.ishost("windows") then
-            python_install = python_install .. ".exe"
-        end
-
+        local python_install = iif(os.ishost('windows'), 'python.exe', 'bin/python')
+        
         result = result:gsub("\\", "/")
         print("MINICONDA_PYTHON_PATH=\"" .. result .. "/" .. python_install .. "\"", "@@@@@@@@@@@@@@")
         defines {
