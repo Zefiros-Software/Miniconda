@@ -212,6 +212,7 @@ premake.override(_G, "project", function(base, name)
         end
 
         result = result:gsub("\\", "/")
+        print("MINICONDA_PYTHON_PATH=\"" .. result .. "/" .. python_install .. "\"", "@@@@@@@@@@@@@@")
         defines {
             "MINICONDA_PATH=\"" .. miniconda.virtualenv.location() .. "\"",
             "MINICONDA_PYTHON_PATH=\"" .. result .. "/" .. python_install .. "\"",
