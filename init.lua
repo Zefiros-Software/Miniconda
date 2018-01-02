@@ -25,8 +25,7 @@ miniconda = {
     path = "",
     virtualenvs = {},
     dirs = {},
-    virtualenv = {},
-    WORKING_DIR = _WORKING_DIR
+    virtualenv = {}
 }
 
 function miniconda.installDir()
@@ -35,17 +34,6 @@ end
 
 function miniconda.getDir()
     return path.join(miniconda.installDir(), iif(os.ishost("windows"), "Scripts/", "bin"))
-end
-
-function miniconda.getPython()
-    
-    return string.format("%s/python%s", miniconda.getPythonDir(), iif(os.ishost("windows"), ".exe", ""))
-end
-
-
-function miniconda.getPythonDir()
-    
-    return path.join(miniconda.installDir(), iif(os.ishost("windows"), "", "bin"))
 end
 
 function miniconda.isInstalled()
@@ -87,7 +75,9 @@ function miniconda.install()
             errorf("This os '%s' is currently not supported!", os.host())
         end
         
+        -- Do not show conda environment string
         miniconda.conda("config --set always_yes yes --set changeps1 no")
+        
         miniconda.conda("update setuptools conda", os.outputoff)
         miniconda.pip("install --upgrade pipenv", os.outputoff)
     end
@@ -95,145 +85,101 @@ function miniconda.install()
     zpm.assert(miniconda.isInstalled(), "Failed to install miniconda!")
 end
 
-
-function miniconda.pipenv(comm, exec)
+function miniconda.run(comm, exec)
     exec = iif(exec ~= nil, exec, os.executef)
     local result, code
     local anaBin = miniconda.getDir()
     if os.ishost("windows") then
-        result, code = exec("set PATH=%%PATH%%;%s; && pipenv %s", anaBin, comm)
+        result, code = exec("set PATH=%s;%%PATH%%; && %s", anaBin, comm)
     else
-        result, code = exec("PATH=$PATH:%s && pipenv %s", anaBin, comm)
+        result, code = exec("PATH=%s:$PATH && %s", anaBin, comm)
     end
     return result, code
-end
-
-function miniconda.opipenv(comm)
-    
-    return miniconda.pipenv(comm, os.outputoff)
-end
-
-miniconda._venvCache = {}
-function miniconda.venv()
-    local cdir = os.getcwd()
-    if miniconda._venvCache[cdir] then
-        return miniconda._venvCache[cdir][1], miniconda._venvCache[cdir][2]
-    end
-
-    local dir, code = miniconda.opipenv("--venv")
-    if code == 0 then
-        miniconda._venvCache[cdir] = {dir, code}
-    end
-    return dir, code
 end
 
 function miniconda.pip(comm, exec)
-    exec = iif(exec ~= nil, exec, os.executef)
-    local anaBin = miniconda.getDir()
     
-    if os.ishost("windows") then
-        exec("set PATH=%%PATH%%;%s; && %s/pip %s", anaBin, anaBin, comm)
-    else
-        exec("PATH=$PATH:%s && %s/python %s/pip %s", anaBin, anaBin, anaBin, comm)
-    end
+    return miniconda.run(("pip %s"):format(comm), exec)
 end
 
 function miniconda.conda(comm, exec)
-    exec = iif(exec ~= nil, exec, os.executef)
-    local anaBin = miniconda.getDir()
-    
-    if os.ishost("windows") then
-        exec("set PATH=%%PATH%%;%s; && %s/conda %s", anaBin, anaBin, comm)
-    else
-        exec("PATH=$PATH:%s && %s/python %s/conda %s", anaBin, anaBin, anaBin, comm)
-    end
+
+    return miniconda.run(("conda %s"):format(comm), exec)
 end
 
-function miniconda.virtualenv.pipenv(comm, exec)
+function miniconda.virtualenv.run(comm, exec)
     exec = iif(exec ~= nil, exec, os.executef)
     
     local result, code
-    local current = os.getcwd()
-    os.chdir(miniconda.WORKING_DIR)
     
     if os.ishost("windows") then
-        result, code = exec("set PATH=%%PATH%%;%s; && pipenv %s", miniconda.getDir(), comm)
+        result, code = exec("set PATH=%s;%%PATH%%; && activate %s && %s", miniconda.getDir(), miniconda.virtualenv.name(), comm)
     else
-        result, code = exec("PATH=$PATH:%s && pipenv %s", miniconda.getDir(), comm)
+        result, code = exec("PATH=%s:$PATH && source activate %s && %s", miniconda.getDir(), miniconda.virtualenv.name(), comm)
     end
     
-    os.chdir(current)
-    
     return result, code
-end
-
-function miniconda.virtualenv.opipenv(comm)
-    
-    return miniconda.virtualenv.pipenv(comm, os.outputoff)
-end
-
-function miniconda.virtualenv.pip(comm)
-    
-    miniconda.virtualenv.pipenv(("run pip %s"):format(comm))
-end
-
-function miniconda.virtualenv.conda(comm)
-    
-    miniconda.virtualenv.pipenv(("run conda %s"):format(comm))
 end
 
 function miniconda._isPythonEnabledDirectory(dir)
     
     return os.isfile(path.join(dir, "Pipfile")) or
         os.isfile(path.join(dir, "requirements.txt")) or
-        os.isfile(path.join(dir, "conda-requirements"))
+        os.isfile(path.join(dir, ".environment.yml"))
 end
 
-
-function miniconda._venvExists(dir)
-    local vdir, code = miniconda.opipenv("--venv")
-    return code == 0 and os.isdir(vdir)
-end
-
-function miniconda._getCondaRequirements(dir)
+function miniconda.installProject()
     
-    return path.join(dir, "conda-requirements.txt")
-end
+    local name = miniconda.virtualenv.name()
+    if miniconda.dirs[name] == nil then
+        miniconda.dirs[name] = true
 
-function miniconda._installDirectory(dir)
-    
-    if miniconda.dirs[dir] == nil then
-        miniconda.dirs[dir] = true
+        local envFile = path.join(zpm.meta.package.location, 'environment.yml')
         
-        local current = os.getcwd()
-        miniconda.WORKING_DIR = dir
-        os.chdir(dir)
-        
-        
-        local dev = iif(dir == _MAIN_SCRIPT_DIR, "--dev", "")
-        local installCondaPackages = false
-        if not miniconda._venvExists(dir) or zpm.cli.force() then
-            miniconda.pipenv(string.format("install --python=\"%s\" %s", miniconda.getPython(), dev))
-            
-            installCondaPackages = true
-        elseif zpm.cli.update() then
-            miniconda.pipenv(string.format("update --python=\"%s\" %s", miniconda.getPython(), dev))
-            
-            installCondaPackages = true
+        if miniconda.virtualenv.exists() and zpm.cli.force() then
+            miniconda.conda(("env remove -n %s"):format(miniconda.virtualenv.name()))            
+        else
+            return
         end
+
+        if os.isfile(envFile) then
         
-        if installCondaPackages and os.isfile(miniconda._getCondaRequirements(dir)) then
-            miniconda.virtualenv.pip("install auxlib ruamel_yaml requests pycosat")
-            miniconda.virtualenv.pip("install conda==4.2.7")
-            miniconda.virtualenv.conda("install -f conda")
-            miniconda.virtualenv.conda("update conda")
-            for s in io.lines(miniconda._getCondaRequirements(dir)) do
-                miniconda.virtualenv.conda(("install --yes %s"):format(s))
+            miniconda.conda(("env create -n %s -f %s"):format(miniconda.virtualenv.name(), envFile))
+        else
+            miniconda.conda(("env create -n %s"):format(miniconda.virtualenv.name()))
+        end
+    end
+end
+
+function miniconda.virtualenv.name()
+
+    if not zpm.meta.package['name'] then
+        return string.format("%s-%s", path.getname(zpm.meta.package.location), string.sha1(zpm.meta.package.location):sub(1, 6))
+    end
+
+    return string.format("%s-%s", path.getname(zpm.meta.package.location), string.sha1(zpm.meta.package.tag))
+end
+
+function miniconda.virtualenv.exists()
+
+    local output = miniconda.conda(("env list"):format(miniconda.virtualenv.name()), os.outputoff)
+    return output:contains(miniconda.virtualenv.name())
+end
+
+function miniconda.virtualenv.location()
+
+    local name = miniconda.virtualenv.name()
+    local output = miniconda.conda(("env list"):format(miniconda.virtualenv.name()), os.outputoff)
+    for line in output:gmatch("([^\n]*)\n?") do
+        if not line:startswith("#") then
+            words = {}
+            for word in line:gmatch("%S+") do 
+                table.insert(words, word)
+            end
+            if words[1] == name then
+                return words[2]
             end
         end
-        
-        os.chdir(current)
-        miniconda.WORKING_DIR = _WORKING_DIR
     end
 end
 
@@ -246,31 +192,24 @@ end
 -- override
 premake.override(_G, "project", function(base, name)
         
-        local rvalue = base(name)
-        if miniconda.virtualenvs[name] == nil and miniconda._isPythonEnabledDirectory(zpm.meta.package.location) then
-            miniconda.virtualenvs[name] = true
-            
-            local current = os.getcwd()
-            os.chdir(zpm.meta.package.location)
-            local result, code = miniconda.venv()
-            
-            miniconda._installDirectory(zpm.util.getRelativeOrAbsoluteDir(_WORKING_DIR, zpm.meta.package.location))
-            
-            local python_install = iif(os.ishost("windows") and not os.isfile(miniconda._getCondaRequirements(zpm.meta.package.location)), "Scripts/python", "bin/python")
-            if os.ishost("windows") then
-                python_install = python_install .. ".exe"
-            end
-            
-            os.chdir(current)
-            if code == 0 then
-                result = result:gsub("\\", "/")
-                defines{
-                    "MINICONDA_PATH=\"" .. result .. "\"",
-                    "MINICONDA_PYTHON_PATH=\"" .. result .. "/" .. python_install .. "\"",
-                }
-            end
+    local rvalue = base(name)
+    if miniconda.virtualenvs[name] == nil and miniconda._isPythonEnabledDirectory(zpm.meta.package.location) then
+        miniconda.virtualenvs[name] = true
+
+        miniconda.installProject()
+        local result = miniconda.virtualenv.location()
+        local python_install = 'python'
+        if os.ishost("windows") then
+            python_install = python_install .. ".exe"
         end
-        return rvalue
+
+        result = result:gsub("\\", "/")
+        defines {
+            "MINICONDA_PATH=\"" .. miniconda.virtualenv.location() .. "\"",
+            "MINICONDA_PYTHON_PATH=\"" .. result .. "/" .. python_install .. "\"",
+        }
+    end
+    return rvalue
 end)
 
 return miniconda
