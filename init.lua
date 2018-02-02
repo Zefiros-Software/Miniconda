@@ -159,10 +159,10 @@ function miniconda.virtualenv.name()
             location = location:sub(1, -2)
         end
 
-        return string.format("%s-%s", path.getname(location), string.sha1(location):sub(1, 6))
+        return string.format("%s-%s", path.getname(location), string.sha1(location):sub(1, 6)):gsub("/", "-")
     end
 
-    return string.format("%s-%s", zpm.meta.package.name, zpm.meta.package.tag)
+    return string.format("%s-%s", zpm.meta.package.name, zpm.meta.package.tag):gsub("/", "-")
 end
 
 function miniconda.virtualenv.exists()
